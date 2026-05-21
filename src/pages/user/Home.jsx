@@ -1,28 +1,35 @@
+import { Link } from "react-router-dom";
+
+import nuggetImage from "../../assets/images/products//chiken nugget fiesta.jpg";
+import karageImage from "../../assets/images/products//karage fiesta.jpg";
+import sosis_sapiImage from "../../assets/images/products//sosis sapi fiesta.jpg";
+import bakso_ikanImage from "../../assets/images/products//bakso ikan shifudo.jpg";
+import otakotak_ikanImage from "../../assets/images/products//otak otak ikan.jpg";
+import sausageImage from "../../assets/images/products//chiken sausage.jpg";
+import chiken_nuggetImage from "../../assets/images/products//nugget kenzler.jpg";
+import siomayImage from "../../assets/images/products//siomay frozen.jpg";
+
 export default function FrostmartHomePage() {
   const products = [
     {
       name: "Chicken Nugget",
       brand: "Fiesta",
-      image:
-        "https://images.unsplash.com/photo-1606755962773-d324e0a13086?q=80&w=800&auto=format&fit=crop",
+      image: nuggetImage,
     },
     {
       name: "Chicken Karage",
       brand: "Fiesta",
-      image:
-        "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
-    },
+      image: karageImage,
+    },    
     {
       name: "Sosis Sapi",
       brand: "Fiesta",
-      image:
-        "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?q=80&w=800&auto=format&fit=crop",
+      image: sosis_sapiImage,
     },
     {
       name: "Bakso Ikan",
       brand: "Shifudo",
-      image:
-        "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=800&auto=format&fit=crop",
+      image: bakso_ikanImage,
     },
   ];
 
@@ -31,29 +38,25 @@ export default function FrostmartHomePage() {
       name: "Otak-otak ikan",
       brand: "Cedea",
       price: "25.000",
-      image:
-        "https://images.unsplash.com/photo-1585238342024-78d387f4a707?q=80&w=800&auto=format&fit=crop",
+      image: otakotak_ikanImage
     },
     {
       name: "Chicken Sausage Fiesta",
       brand: "Fiesta",
       price: "45.000",
-      image:
-        "https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&w=800&auto=format&fit=crop",
-    },
+      image: sausageImage
+     },
     {
       name: "Chicken Nugget",
       brand: " Kanzler",
       price: "40.000",
-      image:
-        "https://images.unsplash.com/photo-1615937691194-97dbd3f3dc29?q=80&w=800&auto=format&fit=crop",
+      image:chiken_nuggetImage,
     },
     {
       name: "Siomay Frozen",
       brand: "First Grade GO",
       price: "30.000",
-      image:
-        "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop",
+      image:siomayImage
     },
   ];
 
@@ -143,7 +146,8 @@ export default function FrostmartHomePage() {
         className="h-[500px] bg-cover bg-center relative flex items-center justify-center"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=1600&auto=format&fit=crop')",
+            "url('https://images.unsplash.com/photo-1615937691194-97dbd3f3dc29?q=80&w=800&auto=format&fit=crop')",
+
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
@@ -153,9 +157,23 @@ export default function FrostmartHomePage() {
             Join our member and get discount up to 50%
           </h2>
 
-          <button className="bg-blue-600 px-10 py-4 rounded-full text-xl font-semibold">
+          <Link to="/login">
+           <button
+            className="
+              bg-blue-900
+              hover:bg-blue-700
+              active:scale-95
+              transition-all
+              duration-200
+              text-white
+              px-6
+              py-3
+              rounded-full
+            "
+          >
             Sign Up
-          </button>
+           </button>
+          </Link>
         </div>
       </section>
 
@@ -206,7 +224,8 @@ export default function FrostmartHomePage() {
         <div className="grid grid-cols-2 gap-10 items-center">
           <div>
             <img
-              src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=1600&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop"
+
               alt="frozen"
               className="rounded-3xl h-[500px] w-full object-cover"
             />
