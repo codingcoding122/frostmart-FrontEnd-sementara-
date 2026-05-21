@@ -9,7 +9,6 @@ import sausageImage from "../../assets/images/products//chiken sausage.jpg";
 import chiken_nuggetImage from "../../assets/images/products//nugget kenzler.jpg";
 import siomayImage from "../../assets/images/products//siomay frozen.jpg";
 
-
 export default function FrostmartHomePage() {
   const products = [
     {
@@ -148,6 +147,7 @@ export default function FrostmartHomePage() {
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1615937691194-97dbd3f3dc29?q=80&w=800&auto=format&fit=crop')",
+
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
@@ -225,6 +225,7 @@ export default function FrostmartHomePage() {
           <div>
             <img
               src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop"
+
               alt="frozen"
               className="rounded-3xl h-[500px] w-full object-cover"
             />
