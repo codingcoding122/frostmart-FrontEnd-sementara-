@@ -9,6 +9,7 @@ import ProductDetail from "../pages/user/ProductDetail";
 import Cart from "../pages/user/Cart";
 import Checkout from "../pages/user/Checkout";
 import Login from "../pages/user/Login";
+import Register from "../pages/user/Register";
 import Profile from "../pages/user/Profile";
 
 import Dashboard from "../pages/admin/Dashboard";
@@ -41,6 +42,22 @@ const router = createBrowserRouter([
       { path: "/admin/products", element: <Products /> },
     ],
   },
+
+  {
+    path: "/",
+    element: <Home />,
+  },
+
+  {
+    path: "/login",
+    element: <Login />,
+  },
+
+  {
+    path: "/register",
+    element: <Register />,
+  },
 ]);
+
 
 export default router;
