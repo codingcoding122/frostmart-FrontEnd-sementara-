@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
   FiSearch,
@@ -9,6 +9,9 @@ import {
 import logo from "../assets/images/logo frostmart.png";
 
 function Navbar() {
+
+  const navigate = useNavigate();
+
   return (
     <nav className="flex items-center justify-between px-10 py-3 bg-white shadow-sm">
 
@@ -17,6 +20,7 @@ function Navbar() {
         to="/"
         className="flex items-center gap-3"
       >
+
         <img
           src={logo}
           alt="FrostMart Logo"
@@ -26,6 +30,7 @@ function Navbar() {
         <h1 className="text-2xl font-bold text-blue-600">
           FrostMart
         </h1>
+
       </NavLink>
 
       {/* MENU */}
@@ -97,16 +102,25 @@ function Navbar() {
           <FiShoppingCart />
         </NavLink>
 
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            isActive
-              ? "text-blue-600"
-              : "text-gray-500"
-          }
+        {/* USER */}
+        <button
+          onClick={() => {
+
+            const isLogin =
+              localStorage.getItem("isLogin");
+
+            if (isLogin) {
+              navigate("/profile/orders");
+            } else {
+              navigate("/login");
+            }
+
+          }}
+
+          className="text-gray-500 hover:text-blue-600 transition"
         >
           <FiUser />
-        </NavLink>
+        </button>
 
       </div>
 
