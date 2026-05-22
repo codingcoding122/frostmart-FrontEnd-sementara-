@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
 
 import Home from "../pages/user/Home";
+import Menu from "../pages/user/Menu";
 import Search from "../pages/user/Search";
 import ProductDetail from "../pages/user/ProductDetail";
 import Cart from "../pages/user/Cart";
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/search", element: <Search /> },
+      { path: "/menu", element: <Menu /> },
       { path: "/product/:id", element: <ProductDetail /> },
       { path: "/cart", element: <Cart /> },
       { path: "/checkout", element: <Checkout /> },
@@ -58,6 +60,5 @@ const router = createBrowserRouter([
     element: <Register />,
   },
 ]);
-
 
 export default router;
