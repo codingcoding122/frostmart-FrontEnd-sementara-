@@ -1,9 +1,7 @@
+import { Navigate } from "react-router-dom";
+
 function Profile() {
-  return (
-    <div>
-      <h1>Profile Page Frostmart</h1>
-    </div>
-  );
+  return <Navigate to="/profile/orders" />;
 }
 
 export default Profile;

@@ -1,11 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+
+  const navigate = useNavigate();
+
+  // DUMMY LOGIN
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    localStorage.setItem("isLogin", "true");
+
+    navigate("/search");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-500 flex justify-center items-center relative overflow-hidden">
 
-      {/* CARD */}
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-sm p-6 z-10">
+
         <h1 className="text-4xl font-bold mb-3 text-gray-700">
           Login to your Account
         </h1>
@@ -14,11 +26,13 @@ function Login() {
           Welcome back to FrostMart
         </p>
 
-        {/* FORM */}
-        <form className="space-y-6">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-6"
+        >
 
-          {/* EMAIL */}
           <div>
+
             <label className="block mb-2 font-medium">
               Email
             </label>
@@ -28,10 +42,11 @@ function Login() {
               placeholder="mail@example.com"
               className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
             />
+
           </div>
 
-          {/* PASSWORD */}
           <div>
+
             <label className="block mb-2 font-medium">
               Password
             </label>
@@ -41,9 +56,9 @@ function Login() {
               placeholder="Enter password"
               className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
             />
+
           </div>
 
-          {/* OPTIONS */}
           <div className="flex justify-between items-center text-sm">
 
             <label className="flex items-center gap-2">
@@ -53,15 +68,15 @@ function Login() {
 
             <button
               type="button"
-              className="text-blue-700"
+              className="text-blue-700 hover:text-blue-900 transition"
             >
               Forgot Password?
             </button>
 
           </div>
 
-          {/* BUTTON */}
           <button
+            type="submit"
             className="w-full bg-blue-900 hover:bg-blue-950 transition text-white py-4 rounded-xl text-lg font-semibold"
           >
             Login
@@ -69,16 +84,17 @@ function Login() {
 
         </form>
 
-        {/* REGISTER LINK */}
         <p className="text-center mt-8">
+
           Not registered yet?{" "}
 
           <Link
             to="/register"
-            className="font-semibold text-blue-800"
+            className="font-semibold text-blue-800 hover:text-blue-950 transition"
           >
             Create an account
           </Link>
+
         </p>
 
       </div>
