@@ -20,17 +20,14 @@ function Navbar() {
         to="/"
         className="flex items-center gap-3"
       >
-
         <img
           src={logo}
           alt="FrostMart Logo"
           className="w-12 h-12 object-contain"
         />
-
         <h1 className="text-2xl font-bold text-blue-600">
           FrostMart
         </h1>
-
       </NavLink>
 
       {/* MENU */}
@@ -49,30 +46,24 @@ function Navbar() {
           </NavLink>
         </li>
 
+        {/* DIUBAH JADI ANCHOR LINK */}
         <li>
-          <NavLink
-            to="/search"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 border-b-4 border-blue-600 pb-1"
-                : "text-gray-500"
-            }
+          <a
+            href="#menu"
+            className="text-gray-500 hover:text-blue-600 transition"
           >
             Menu
-          </NavLink>
+          </a>
         </li>
 
+        {/* DIUBAH JADI ANCHOR LINK */}
         <li>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 border-b-4 border-blue-600 pb-1"
-                : "text-gray-500"
-            }
+          <a
+            href="#about"
+            className="text-gray-500 hover:text-blue-600 transition"
           >
             About
-          </NavLink>
+          </a>
         </li>
 
       </ul>
@@ -105,7 +96,6 @@ function Navbar() {
         {/* USER */}
         <button
           onClick={() => {
-
             const isLogin =
               localStorage.getItem("isLogin");
 
@@ -114,9 +104,7 @@ function Navbar() {
             } else {
               navigate("/login");
             }
-
           }}
-
           className="text-gray-500 hover:text-blue-600 transition"
         >
           <FiUser />

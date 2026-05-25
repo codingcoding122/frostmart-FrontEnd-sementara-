@@ -147,7 +147,6 @@ export default function FrostmartHomePage() {
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1615937691194-97dbd3f3dc29?q=80&w=800&auto=format&fit=crop')",
-
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
@@ -177,8 +176,8 @@ export default function FrostmartHomePage() {
         </div>
       </section>
 
-      {/* POPULAR MENU */}
-      <section className="py-28 px-10 text-center bg-[#f8f8f8]">
+      {/* POPULAR MENU (ID DITAMBAHKAN DI SINI) */}
+      <section id="menu" className="py-28 px-10 text-center bg-[#f8f8f8]">
         <p className="text-blue-700 font-semibold text-xl mb-4">Our menu</p>
 
         <h2 className="text-5xl font-bold mb-6">
@@ -225,7 +224,6 @@ export default function FrostmartHomePage() {
           <div>
             <img
               src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop"
-
               alt="frozen"
               className="rounded-3xl h-[500px] w-full object-cover"
             />
@@ -265,6 +263,6 @@ export default function FrostmartHomePage() {
           </div>
         </div>
       </section>
-          </div>
+    </div>
   );
 }

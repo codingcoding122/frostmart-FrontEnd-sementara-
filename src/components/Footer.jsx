@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-blue-900 text-white px-10 py-20">
+    <footer id="about" className="bg-blue-900 text-white px-10 py-20">
 
       <div className="grid grid-cols-4 gap-10 border-b border-white/20 pb-14">
 
@@ -86,4 +86,4 @@ function Footer() {
   );
 }
 
-export default Footer;  
+export default Footer;
