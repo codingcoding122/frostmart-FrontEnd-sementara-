@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../store/slices/cartSlice";
 import {
   FiStar,
   FiChevronLeft,
@@ -327,6 +329,10 @@ function ProductCard({ product, onAddToCart }) {
 }
 
 function Menu() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isLogin = useSelector((state) => state.auth.isLogin);
+
   const [activeCategory, setActiveCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [maxPrice, setMaxPrice] = useState(150000);
@@ -355,8 +361,12 @@ function Menu() {
   };
 
   const handleAddToCart = (product) => {
-    alert(`${product.name} ditambahkan ke keranjang!`);
-    // TODO: dispatch ke Redux cartSlice
+    if (!isLogin) {
+      alert("Kamu harus login dulu untuk menambahkan produk ke keranjang!");
+      navigate("/login");
+      return;
+    }
+    dispatch(addToCart({ ...product }));
   };
 
   return (
