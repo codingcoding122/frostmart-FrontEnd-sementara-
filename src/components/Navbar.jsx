@@ -1,117 +1,118 @@
-import { NavLink, useNavigate } from "react-router-dom";
-
-import {
-  FiSearch,
-  FiShoppingCart,
-  FiUser,
-} from "react-icons/fi";
-
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { FiSearch, FiShoppingCart } from "react-icons/fi";
+import { FaUserCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import logo from "../assets/images/logo frostmart.png";
 
 function Navbar() {
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSearchPage = location.pathname === "/search";
+
+  // Ambil dari Redux
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartCount = cartItems.reduce((sum, i) => sum + i.qty, 0);
 
   return (
-    <nav className="flex items-center justify-between px-10 py-3 bg-white shadow-sm">
-
+    <nav className="flex items-center justify-between px-10 py-3 bg-white shadow-sm gap-6">
+      
       {/* LOGO */}
-      <NavLink
-        to="/"
-        className="flex items-center gap-3"
-      >
+      <NavLink to="/" className="flex items-center gap-2 shrink-0">
         <img
           src={logo}
           alt="FrostMart Logo"
-          className="w-12 h-12 object-contain"
+          className="w-10 h-10 object-contain"
         />
-        <h1 className="text-2xl font-bold text-blue-600">
-          FrostMart
-        </h1>
+        <h1 className="text-xl font-bold text-blue-600">FrostMart</h1>
       </NavLink>
 
-      {/* MENU */}
-      <ul className="flex gap-10 text-lg font-medium">
+      {/* TENGAH (MENGGUNAKAN ANCHOR LINK MVP) */}
+      <div className="flex-1 flex justify-center">
+        <ul className="flex gap-10 text-lg font-medium">
+          <li>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-600 border-b-4 border-blue-600 pb-1"
+                  : "text-gray-500 hover:text-blue-600 transition"
+              }
+            >
+              Home
+            </NavLink>
+          </li>
+          
+          {/* DIUBAH JADI ANCHOR LINK */}
+          <li>
+            <a
+              href="#menu"
+              className="text-gray-500 hover:text-blue-600 transition"
+            >
+              Menu
+            </a>
+          </li>
 
-        <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-blue-600 border-b-4 border-blue-600 pb-1"
-                : "text-gray-500"
-            }
+          {/* DIUBAH JADI ANCHOR LINK */}
+          <li>
+            <a
+              href="#about"
+              className="text-gray-500 hover:text-blue-600 transition"
+            >
+              About
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* KANAN */}
+      <div className="flex items-center gap-5 shrink-0">
+        
+        {/* ICON SEARCH */}
+        {!isSearchPage && (
+          <button
+            onClick={() => navigate("/search")}
+            className="text-gray-500 text-2xl hover:text-blue-600 transition"
           >
-            Home
-          </NavLink>
-        </li>
+            <FiSearch />
+          </button>
+        )}
 
-        {/* DIUBAH JADI ANCHOR LINK */}
-        <li>
-          <a
-            href="#menu"
-            className="text-gray-500 hover:text-blue-600 transition"
-          >
-            Menu
-          </a>
-        </li>
-
-        {/* DIUBAH JADI ANCHOR LINK */}
-        <li>
-          <a
-            href="#about"
-            className="text-gray-500 hover:text-blue-600 transition"
-          >
-            About
-          </a>
-        </li>
-
-      </ul>
-
-      {/* ICONS */}
-      <div className="flex items-center gap-6 text-2xl">
-
-        <NavLink
-          to="/search"
-          className={({ isActive }) =>
-            isActive
-              ? "text-blue-600"
-              : "text-gray-500"
-          }
-        >
-          <FiSearch />
-        </NavLink>
-
+        {/* CART dengan badge */}
         <NavLink
           to="/cart"
           className={({ isActive }) =>
             isActive
-              ? "text-blue-600"
-              : "text-gray-500"
+              ? "text-blue-600 text-2xl relative"
+              : "text-gray-500 text-2xl relative hover:text-blue-600 transition"
           }
         >
           <FiShoppingCart />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+              {cartCount}
+            </span>
+          )}
         </NavLink>
 
-        {/* USER */}
-        <button
-          onClick={() => {
-            const isLogin =
-              localStorage.getItem("isLogin");
-
-            if (isLogin) {
-              navigate("/profile/orders");
-            } else {
-              navigate("/login");
-            }
-          }}
-          className="text-gray-500 hover:text-blue-600 transition"
-        >
-          <FiUser />
-        </button>
-
+        {/* PROFILE / SIGN IN */}
+        {isLogin ? (
+          <button
+            onClick={() => navigate("/profile")}
+            className="text-gray-500 text-2xl hover:text-blue-600 transition"
+          >
+            <FaUserCircle />
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-1.5 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+          >
+            Sign in
+          </button>
+        )}
       </div>
-
+      
     </nav>
   );
 }
