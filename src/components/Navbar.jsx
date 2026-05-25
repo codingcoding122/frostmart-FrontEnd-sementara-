@@ -9,7 +9,6 @@ function Navbar() {
   const location = useLocation();
   const isSearchPage = location.pathname === "/search";
 
-  // Ambil dari Redux
   const isLogin = useSelector((state) => state.auth.isLogin);
   const cartItems = useSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((sum, i) => sum + i.qty, 0);
@@ -27,7 +26,7 @@ function Navbar() {
         <h1 className="text-xl font-bold text-blue-600">FrostMart</h1>
       </NavLink>
 
-      {/* TENGAH (MENGGUNAKAN ANCHOR LINK MVP) */}
+      {/* TENGAH */}
       <div className="flex-1 flex justify-center">
         <ul className="flex gap-10 text-lg font-medium">
           <li>
@@ -43,17 +42,21 @@ function Navbar() {
             </NavLink>
           </li>
           
-          {/* DIUBAH JADI ANCHOR LINK */}
+          {/* DIKEMBALIKAN JADI LINK ROUTER KE HALAMAN MENU */}
           <li>
-            <a
-              href="#menu"
-              className="text-gray-500 hover:text-blue-600 transition"
+            <NavLink
+              to="/menu"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-blue-600 border-b-4 border-blue-600 pb-1"
+                  : "text-gray-500 hover:text-blue-600 transition"
+              }
             >
               Menu
-            </a>
+            </NavLink>
           </li>
 
-          {/* DIUBAH JADI ANCHOR LINK */}
+          {/* ABOUT TETAP ANCHOR LINK */}
           <li>
             <a
               href="#about"
@@ -68,7 +71,6 @@ function Navbar() {
       {/* KANAN */}
       <div className="flex items-center gap-5 shrink-0">
         
-        {/* ICON SEARCH */}
         {!isSearchPage && (
           <button
             onClick={() => navigate("/search")}
@@ -78,7 +80,6 @@ function Navbar() {
           </button>
         )}
 
-        {/* CART dengan badge */}
         <NavLink
           to="/cart"
           className={({ isActive }) =>
@@ -95,7 +96,6 @@ function Navbar() {
           )}
         </NavLink>
 
-        {/* PROFILE / SIGN IN */}
         {isLogin ? (
           <button
             onClick={() => navigate("/profile")}
@@ -112,7 +112,6 @@ function Navbar() {
           </button>
         )}
       </div>
-      
     </nav>
   );
 }

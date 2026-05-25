@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom"; // <--- Tambahkan Navigate di sini
 
 import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
@@ -32,6 +32,7 @@ const router = createBrowserRouter([
       { path: "/menu", element: <Menu /> },
       { path: "/search", element: <Search /> },
       { path: "/product/:id", element: <ProductDetail /> },
+      { path: "/product", element: <Navigate to="/menu" replace /> }, // <--- Baris tambahan untuk mencegah 404
       { path: "/cart", element: <Cart /> },
       { path: "/checkout", element: <Checkout /> },
       { path: "/login", element: <Login /> },
