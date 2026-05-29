@@ -13,15 +13,17 @@ import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 
 import Profile from "../pages/user/Profile";
-import Orders from "../pages/user/Orders";
+import UserOrders from "../pages/user/Orders";
 import Settings from "../pages/user/Settings";
 import Address from "../pages/user/Address";
 
 // ADMIN PAGES
 import Dashboard from "../pages/admin/Dashboard";
-import Users from "../pages/admin/Users";
-import Transactions from "../pages/admin/Transactions";
+import Analytics from "../pages/admin/Analytics";
+import Orders from "../pages/admin/Orders";
 import Products from "../pages/admin/Products";
+import Customers from "../pages/admin/Customers";
+import Invoice from "../pages/admin/Invoice";
 
 const router = createBrowserRouter([
 
@@ -77,7 +79,7 @@ const router = createBrowserRouter([
       // PROFILE PAGES
       {
         path: "/profile/orders",
-        element: <Orders />,
+        element: <UserOrders />,
       },
 
       {
@@ -95,32 +97,36 @@ const router = createBrowserRouter([
   // =========================
   // ADMIN ROUTES
   // =========================
-  {
-    path: "/admin",
-    element: <AdminLayout />,
-
-    children: [
-      {
-        path: "/admin",
-        element: <Dashboard />,
-      },
-
-      {
-        path: "/admin/users",
-        element: <Users />,
-      },
-
-      {
-        path: "/admin/transactions",
-        element: <Transactions />,
-      },
-
-      {
-        path: "/admin/products",
-        element: <Products />,
-      },
-    ],
-  },
+ {
+  path: "/admin",
+  element: <AdminLayout />,
+  children: [
+    {
+      index: true,
+      element: <Dashboard />,
+    },
+    {
+      path: "analytics",
+      element: <Analytics />,
+    },
+    {
+      path: "orders",
+      element: <Orders />,
+    },
+    {
+      path: "products",
+      element: <Products />,
+    },
+    {
+      path: "customers",
+      element: <Customers />,
+    },
+    {
+      path: "invoice",
+      element: <Invoice />,
+    },
+  ],
+}, 
 ]);
 
 export default router;

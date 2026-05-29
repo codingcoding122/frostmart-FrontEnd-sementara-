@@ -1,25 +1,21 @@
-function Dashboard() {
+function Analytics() {
 
-  const orders = [
+  const products = [
     {
-      user: "Putri Indah",
-      id: "FM-012",
-      status: "Selesai",
+      name: "Chicken Nugget Crispy",
+      views: "1.250",
     },
     {
-      user: "Novanda",
-      id: "FM-011",
-      status: "Selesai",
+      name: "Beef Sausage Premium",
+      views: "1.120",
     },
     {
-      user: "Angga Adi",
-      id: "FM-010",
-      status: "Menunggu",
+      name: "Chicken Katsu Frozen",
+      views: "980",
     },
     {
-      user: "Dani Ahmad",
-      id: "FM-009",
-      status: "Dibatalkan",
+      name: "Fish Roll Original",
+      views: "870",
     },
   ];
 
@@ -30,7 +26,7 @@ function Dashboard() {
       <div>
 
         <h1 className="text-5xl font-bold text-gray-800">
-          Dashboard
+          Analytics
         </h1>
 
         <p className="text-gray-500 mb-8">
@@ -38,21 +34,29 @@ function Dashboard() {
         </p>
 
         {/* CARDS */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-4 gap-6 mb-8">
 
           <div className="bg-white rounded-3xl p-6 shadow">
 
             <p className="text-gray-400 mb-2">
-              Total Revenue
+              Page Views
             </p>
 
             <h1 className="text-5xl font-bold">
-              Rp 2.632.775
+              2.213
             </h1>
 
-            <p className="text-green-500 mt-2">
-              +10.8% vs last month
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow">
+
+            <p className="text-gray-400 mb-2">
+              Total Orders per Day
             </p>
+
+            <h1 className="text-5xl font-bold">
+              16
+            </h1>
 
           </div>
 
@@ -66,25 +70,17 @@ function Dashboard() {
               184
             </h1>
 
-            <p className="text-green-500 mt-2">
-              +5.9% vs last month
-            </p>
-
           </div>
 
           <div className="bg-white rounded-3xl p-6 shadow">
 
             <p className="text-gray-400 mb-2">
-              Page Views
+              Avg Session
             </p>
 
-            <h1 className="text-5xl font-bold">
-              27.922
+            <h1 className="text-4xl font-bold">
+              6 Minutes
             </h1>
-
-            <p className="text-green-500 mt-2">
-              +22.7% vs last month
-            </p>
 
           </div>
 
@@ -94,19 +90,19 @@ function Dashboard() {
         <div className="bg-white rounded-3xl p-8 shadow mb-8">
 
           <h2 className="text-3xl font-bold mb-6">
-            Overview April
+            Analytics Overview
           </h2>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-5 gap-4">
 
             <div className="bg-blue-100 rounded-2xl p-6 text-center">
 
               <h1 className="text-4xl font-bold text-blue-900">
-                130
+                5
               </h1>
 
               <p className="text-gray-600 mt-2">
-                January
+                Day 1
               </p>
 
             </div>
@@ -114,11 +110,11 @@ function Dashboard() {
             <div className="bg-blue-100 rounded-2xl p-6 text-center">
 
               <h1 className="text-4xl font-bold text-blue-900">
-                160
+                6
               </h1>
 
               <p className="text-gray-600 mt-2">
-                February
+                Day 2
               </p>
 
             </div>
@@ -126,11 +122,11 @@ function Dashboard() {
             <div className="bg-blue-100 rounded-2xl p-6 text-center">
 
               <h1 className="text-4xl font-bold text-blue-900">
-                165
+                10
               </h1>
 
               <p className="text-gray-600 mt-2">
-                March
+                Day 3
               </p>
 
             </div>
@@ -138,11 +134,23 @@ function Dashboard() {
             <div className="bg-blue-100 rounded-2xl p-6 text-center">
 
               <h1 className="text-4xl font-bold text-blue-900">
-                190
+                10
               </h1>
 
               <p className="text-gray-600 mt-2">
-                April
+                Day 4
+              </p>
+
+            </div>
+
+            <div className="bg-blue-100 rounded-2xl p-6 text-center">
+
+              <h1 className="text-4xl font-bold text-blue-900">
+                16
+              </h1>
+
+              <p className="text-gray-600 mt-2">
+                Day 5
               </p>
 
             </div>
@@ -155,25 +163,21 @@ function Dashboard() {
         <div className="bg-white rounded-3xl p-8 shadow">
 
           <h2 className="text-3xl font-bold mb-6">
-            Recent Orders
+            Top Products
           </h2>
 
           <table className="w-full">
 
             <thead>
 
-              <tr className="text-left border-b">
+              <tr className="border-b text-left">
 
                 <th className="pb-4">
-                  User
+                  Products
                 </th>
 
                 <th className="pb-4">
-                  Order ID
-                </th>
-
-                <th className="pb-4">
-                  Status
+                  Views
                 </th>
 
               </tr>
@@ -182,35 +186,18 @@ function Dashboard() {
 
             <tbody>
 
-              {orders.map((item, index) => (
+              {products.map((item, index) => (
                 <tr
                   key={index}
                   className="border-b"
                 >
 
                   <td className="py-4">
-                    {item.user}
+                    {item.name}
                   </td>
 
                   <td>
-                    {item.id}
-                  </td>
-
-                  <td>
-
-                    <span
-                      className={`px-4 py-1 rounded-full text-white text-sm
-                      ${
-                        item.status === "Selesai"
-                          ? "bg-green-500"
-                          : item.status === "Menunggu"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      {item.status}
-                    </span>
-
+                    {item.views}
                   </td>
 
                 </tr>
@@ -227,4 +214,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Analytics;

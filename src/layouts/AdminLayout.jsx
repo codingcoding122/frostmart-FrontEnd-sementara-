@@ -1,11 +1,24 @@
 import { Outlet } from "react-router-dom";
 
+import AdminNavbar from "../components/AdminNavbar";
+import AdminSidebar from "../components/AdminSidebar";
+
 function AdminLayout() {
   return (
-    <div>
-      <h1>Sidebar Admin</h1>
+    <div className="bg-gray-100 min-h-screen">
 
-      <Outlet />
+      <AdminNavbar />
+
+      <div className="flex">
+
+        <AdminSidebar />
+
+        <div className="flex-1 p-8">
+          <Outlet />
+        </div>
+
+      </div>
+
     </div>
   );
 }
