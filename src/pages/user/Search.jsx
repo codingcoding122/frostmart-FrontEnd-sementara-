@@ -1,299 +1,105 @@
-import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { FiShoppingCart, FiStar } from "react-icons/fi";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../store/slices/cartSlice";
+import { FiShoppingCart, FiTag, FiSearch } from "react-icons/fi";
 
-const DUMMY_PRODUCTS = [
-  {
-    id: 1,
-    name: "Chicken Wings",
-    subLabel: "So Good · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 45000,
-    rating: 4.5,
-    image: "/src/assets/images/products/chiken nugget fiesta.jpg",
-  },
-  {
-    id: 2,
-    name: "Vegetables Nugget",
-    subLabel: "Fiesta · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 65000,
-    rating: 4.2,
-    image: "/src/assets/images/products/chiken nugget fiesta.jpg",
-  },
-  {
-    id: 3,
-    name: "Lumpia Frozen",
-    subLabel: "Samijaya Jogja · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 85000,
-    rating: 4.0,
-    image: "/src/assets/images/products/karage fiesta.jpg",
-  },
-  {
-    id: 4,
-    name: "French Fries",
-    subLabel: "Belfoods · Frozen Vegetables",
-    category: "Frozen Vegetables",
-    price: 25000,
-    rating: 4.3,
-    image: "/src/assets/images/products/siomay frozen.jpg",
-  },
-  {
-    id: 5,
-    name: "Mixed Vegetables",
-    subLabel: "Golden Farm · Frozen Vegetables",
-    category: "Frozen Vegetables",
-    price: 41000,
-    rating: 4.1,
-    image: "/src/assets/images/products/otak otak ikan.jpg",
-  },
-  {
-    id: 6,
-    name: "Beef Patties",
-    subLabel: "Yona · Frozen Beef",
-    category: "Frozen Beef",
-    price: 45000,
-    rating: 4.4,
-    image: "/src/assets/images/products/sosis sapi fiesta.jpg",
-  },
-  {
-    id: 7,
-    name: "Dimsum Frozen",
-    subLabel: "Damory · Frozen Seafood",
-    category: "Frozen Seafood",
-    price: 28000,
-    rating: 4.2,
-    image: "/src/assets/images/products/otak otak ikan.jpg",
-  },
-  {
-    id: 8,
-    name: "Seafood Ebi Fry Tempura",
-    subLabel: "Fiesta · Frozen Seafood",
-    category: "Frozen Seafood",
-    price: 36000,
-    rating: 4.1,
-    image: "/src/assets/images/products/bakso ikan shifudo.jpg",
-  },
-  {
-    id: 9,
-    name: "Fillet Ikan Patin",
-    subLabel: "Frozen Pangasius · Frozen Seafood",
-    category: "Frozen Seafood",
-    price: 53000,
-    rating: 4.3,
-    image: "/src/assets/images/products/bakso ikan shifudo.jpg",
-  },
-  {
-    id: 10,
-    name: "Ayam Potong 1/2 Ekor",
-    subLabel: "Frozen · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 28000,
-    rating: 4.0,
-    image: "/src/assets/images/products/chiken sausage.jpg",
-  },
-  {
-    id: 11,
-    name: "Frozen Mix Vegetable",
-    subLabel: "Golden Farm · Frozen Vegetables",
-    category: "Frozen Vegetables",
-    price: 32000,
-    rating: 4.1,
-    image: "/src/assets/images/products/siomay frozen.jpg",
-  },
-  {
-    id: 12,
-    name: "Risol Mayo",
-    subLabel: "Nisofood · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 20000,
-    rating: 3.8,
-    image: "/src/assets/images/products/karage fiesta.jpg",
-  },
-  {
-    id: 13,
-    name: "Minipou Isi Coklat",
-    subLabel: "Chik Yen · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 35000,
-    rating: 4.4,
-    image: "/src/assets/images/products/nugget kenzler.jpg",
-  },
-  {
-    id: 14,
-    name: "Baso Ayam Mini",
-    subLabel: "Fiesta · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 15000,
-    rating: 4.1,
-    image: "/src/assets/images/products/nugget kenzler.jpg",
-  },
-  {
-    id: 15,
-    name: "Chicken Sausage",
-    subLabel: "SoGood · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 48000,
-    rating: 4.5,
-    image: "/src/assets/images/products/chiken sausage.jpg",
-  },
-  {
-    id: 16,
-    name: "Nugget Kenzler",
-    subLabel: "Kenzler · Frozen Chicken",
-    category: "Frozen Chicken",
-    price: 47000,
-    rating: 4.6,
-    image: "/src/assets/images/products/nugget kenzler.jpg",
-  },
-  {
-    id: 17,
-    name: "Bakso Ikan Shifudo",
-    subLabel: "Shifudo · Frozen Seafood",
-    category: "Frozen Seafood",
-    price: 32000,
-    rating: 4.1,
-    image: "/src/assets/images/products/bakso ikan shifudo.jpg",
-  },
-  {
-    id: 18,
-    name: "Siomay Frozen",
-    subLabel: "Belfoods · Frozen Seafood",
-    category: "Frozen Seafood",
-    price: 35000,
-    rating: 4.4,
-    image: "/src/assets/images/products/siomay frozen.jpg",
-  },
+// =====================
+// DATA DUMMY PRODUK
+// =====================
+const dummyProducts = [
+  { id: 1, name: "Chicken Wings Premium", brand: "So Good", category: "Frozen Chicken", price: 45000, image: "/src/assets/images/products/chiken nugget fiesta.jpg" },
+  { id: 2, name: "Vegetables Nugget", brand: "Fiesta", category: "Frozen Chicken", price: 65000, image: "/src/assets/images/products/karage fiesta.jpg" },
+  { id: 3, name: "Lumpia Frozen", brand: "Samijaya Jogja", category: "Frozen Vegetables", price: 85000, image: "/src/assets/images/products/siomay frozen.jpg" },
+  { id: 4, name: "French Fries", brand: "Belfoods", category: "Frozen Vegetables", price: 25000, image: "/src/assets/images/products/siomay frozen.jpg" },
+  { id: 13, name: "Minipou Isi Coklat", brand: "Chik Yen", category: "Frozen Chicken", price: 35000, image: "/src/assets/images/products/nugget kenzler.jpg" },
+  { id: 14, name: "Baso Ayam Mini", brand: "Fiesta", category: "Frozen Chicken", price: 15000, image: "/src/assets/images/products/nugget kenzler.jpg" },
+  { id: 16, name: "Chicken Nugget Fiesta", brand: "Fiesta", category: "Frozen Chicken", price: 45000, image: "/src/assets/images/products/nugget kenzler.jpg" },
+  { id: 17, name: "Chicken Nugget Kanzler", brand: "Kanzler", category: "Frozen Chicken", price: 47000, image: "/src/assets/images/products/nugget kenzler.jpg" },
+  { id: 18, name: "Siomay Frozen", brand: "Belfoods", category: "Frozen Seafood", price: 35000, image: "/src/assets/images/products/siomay frozen.jpg" }
 ];
 
 const CATEGORIES = [
-  { label: "All Products", value: "" },
-  { label: "Frozen Chicken", value: "Frozen Chicken" },
-  { label: "Frozen Beef", value: "Frozen Beef" },
-  { label: "Frozen Seafood", value: "Frozen Seafood" },
-  { label: "Frozen Vegetables", value: "Frozen Vegetables" },
+  "All Products",
+  "Frozen Chicken",
+  "Frozen Beef",
+  "Frozen Seafood",
+  "Frozen Vegetables",
 ];
 
-const PRICE_RANGES = [
-  { label: "Semua harga", value: "all" },
-  { label: "<Rp 30.000", value: "lt30" },
-  { label: "Rp 30.000 - Rp 80.000", value: "30to80" },
-  { label: "> Rp 80.000", value: "gt80" },
-];
-
-function applyFilters(products, query, category, priceRange) {
-  let result = [...products];
-  if (query.trim())
-    result = result.filter((p) =>
-      p.name.toLowerCase().includes(query.toLowerCase()),
-    );
-  if (category) result = result.filter((p) => p.category === category);
-  if (priceRange === "lt30") result = result.filter((p) => p.price < 30000);
-  else if (priceRange === "30to80")
-    result = result.filter((p) => p.price >= 30000 && p.price <= 80000);
-  else if (priceRange === "gt80")
-    result = result.filter((p) => p.price > 80000);
-  return result;
-}
-
-function Stars({ rating }) {
+function ProductCard({ product, onAddToCart }) {
   return (
-    <div className="flex justify-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <FiStar
-          key={s}
-          size={12}
-          className={
-            s <= Math.round(rating)
-              ? "fill-yellow-400 text-yellow-400"
-              : "text-gray-200 fill-gray-200"
-          }
-        />
-      ))}
-    </div>
-  );
-}
-
-const CIRCLE_SIZE = 120;
-const OVERLAP = Math.round(CIRCLE_SIZE * 0.55);
-
-function ProductCard({ product, onAddToCart, navigate }) {
-  return (
-    <div
-      style={{ paddingTop: `${OVERLAP}px` }}
-      className="mx-auto w-full max-w-[210px]"
-    >
-      <div
-        className="relative bg-white rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col pb-4 px-3 cursor-pointer"
-        onClick={() => navigate(`/product/${product.id}`)}
-      >
-        {/* Foto bulat menonjol */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden shadow-lg bg-gray-100 border-4 border-white"
-          style={{
-            width: `${CIRCLE_SIZE}px`,
-            height: `${CIRCLE_SIZE}px`,
-            top: `-${OVERLAP}px`,
-          }}
-        >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src =
-                "https://placehold.co/120x120/e2e8f0/94a3b8?text=F";
-            }}
-          />
+    <div className="mt-12 w-full max-w-[220px] mx-auto">
+      <div className="relative bg-white rounded-3xl shadow-[0_4px_20px_-5px_rgba(0,0,0,0.08)] hover:shadow-xl transition-shadow pt-14 pb-4 px-4 flex flex-col h-full border border-gray-50 items-center text-center">
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-white rounded-full p-1 shadow-sm">
+          <Link to={`/product/${product.id}`} className="block w-full h-full rounded-full overflow-hidden bg-gray-100">
+            <img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/120x120/e2e8f0/94a3b8?text=Img"; }} />
+          </Link>
         </div>
-
-        <div style={{ height: `${CIRCLE_SIZE - OVERLAP + 8}px` }} />
-
-        <div className="flex flex-col items-center text-center w-full">
-          {product.rating && <Stars rating={product.rating} />}
-          <h3 className="font-bold text-gray-800 mt-1 text-sm leading-tight line-clamp-1 underline">
-            {product.name}
-          </h3>
-          {product.subLabel && (
-            <p className="text-xs text-gray-400 mt-0.5">{product.subLabel}</p>
-          )}
-          <p className="text-blue-600 font-bold text-sm mt-2">
-            RP: {product.price.toLocaleString("id-ID")}
-          </p>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart(product);
-            }}
-            className="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition"
-          >
-            <FiShoppingCart size={14} /> Add to Cart
-          </button>
+        <div className="flex-1 flex flex-col w-full">
+          <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-1 mt-1">{product.name}</h3>
+          <p className="text-[11px] text-gray-500 mt-1 mb-2">{product.category} By {product.brand}</p>
+          <div className="mt-auto w-full">
+            <p className="text-[#2453d4] font-bold text-[15px] mb-3">RP {product.price.toLocaleString("id-ID")}</p>
+            <button onClick={() => onAddToCart(product)} className="w-full bg-[#1c54ff] hover:bg-blue-800 text-white rounded-full py-2 flex items-center justify-center gap-2 text-sm font-semibold shadow-md transition-transform hover:scale-105 active:scale-95">
+              <FiShoppingCart size={16} /> Add to Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default function Search() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+function Search() {
   const dispatch = useDispatch();
-  const isLogin = useSelector((state) => state.auth.isLogin);
+  const navigate = useNavigate();
+  const isLogin = useSelector((state) => state.auth?.isLogin || false);
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryFromUrl = searchParams.get("q") || ""; 
 
-  const query = searchParams.get("q") || "";
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState("all");
+  const [searchInput, setSearchInput] = useState(queryFromUrl);
+  const [activeCategory, setActiveCategory] = useState("All Products");
+  const [priceFilter, setPriceFilter] = useState("all");
 
-  const filtered = applyFilters(
-    DUMMY_PRODUCTS,
-    query,
-    selectedCategory,
-    selectedPrice,
-  );
+  useEffect(() => {
+    setSearchInput(queryFromUrl);
+  }, [queryFromUrl]);
+
+  const filtered = useMemo(() => {
+    return dummyProducts.filter((p) => {
+      const matchCat = activeCategory === "All Products" || p.category === activeCategory;
+      
+      let matchPrice = true;
+      if (priceFilter === "under30") matchPrice = p.price < 30000;
+      if (priceFilter === "30to80") matchPrice = p.price >= 30000 && p.price <= 80000;
+      if (priceFilter === "above80") matchPrice = p.price > 80000;
+      
+      // PERBAIKAN: Sekarang bisa mencari berdasarkan Nama Produk ATAU Kategori Produk
+      const matchSearch = queryFromUrl === "" || 
+                          p.name.toLowerCase().includes(queryFromUrl.toLowerCase()) ||
+                          p.category.toLowerCase().includes(queryFromUrl.toLowerCase());
+      
+      return matchCat && matchPrice && matchSearch;
+    });
+  }, [activeCategory, priceFilter, queryFromUrl]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchInput.trim() === "") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ q: searchInput });
+    }
+  };
+
+  const handleResetSearch = () => {
+    setSearchInput("");
+    setSearchParams({});
+    setActiveCategory("All Products");
+    setPriceFilter("all");
+  };
 
   const handleAddToCart = (product) => {
     if (!isLogin) {
@@ -304,116 +110,80 @@ export default function Search() {
     dispatch(addToCart({ ...product }));
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      {/* HERO */}
-      <div
-        className="relative text-center pt-16 pb-24"
-        style={{
-          background:
-            "linear-gradient(180deg, #60a5fa 0%, #3b3fd8 60%, #3730c4 100%)",
-        }}
-      >
-        <h1 className="text-5xl md:text-6xl font-extrabold text-white uppercase tracking-widest mb-5">
-          Always Frozen
-        </h1>
-        {query ? (
-          <div className="text-white/90 text-base space-y-1">
-            <p>
-              Hasil pencarian untuk:{" "}
-              <span className="font-semibold">"{query}"</span>
-            </p>
-            <p>{filtered.length} produk ditemukan</p>
-          </div>
-        ) : (
-          <p className="text-white/80 text-base">
-            Ketik nama produk di search bar untuk mulai mencari
-          </p>
-        )}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg
-            viewBox="0 0 1440 100"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            style={{ height: "80px", width: "100%" }}
-          >
-            <path
-              d="M0,60 C200,110 400,20 600,60 C800,100 1000,20 1200,55 C1320,75 1400,50 1440,60 L1440,100 L0,100 Z"
-              fill="#f3f4f6"
-            />
+  if (filtered.length === 0) {
+    return (
+      <div className="min-h-[75vh] bg-[#f8fafc] flex flex-col items-center justify-center px-6 py-20 text-center">
+        <div className="w-20 h-20 bg-[#eef2ff] text-[#6484e5] rounded-full flex items-center justify-center mb-6">
+          <svg stroke="currentColor" fill="none" strokeWidth="1.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="36" width="36" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="7"></circle>
+            <line x1="21" y1="21" x2="15" y2="15"></line>
+            <line x1="8" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="8" y2="12"></line>
           </svg>
         </div>
+        <h2 className="text-[22px] md:text-[26px] font-extrabold text-[#11327c] mb-3">
+          Oops! Produk Tidak Ditemukan
+        </h2>
+        <p className="text-gray-500 text-[13px] md:text-sm max-w-sm mx-auto mb-6 leading-relaxed">
+          Maaf, makanan beku premium yang Anda cari tidak tersedia atau mungkin ada kesalahan ketik.
+        </p>
+        <button onClick={handleResetSearch} className="text-[#1c54ff] text-xs md:text-sm font-bold hover:underline transition-all">
+          Atau Jelajahi Katalog Produk &gt;
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f5f5f5] pb-24">
+      <div className="bg-[#2453d4] pt-16 pb-28 px-6 text-center text-white rounded-b-[3rem] shadow-sm relative">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-widest uppercase mb-6">ALWAYS FROZEN</h1>
+        <form onSubmit={handleSearchSubmit} className="max-w-xl mx-auto mb-6">
+          <div className="relative flex items-center w-full h-12 rounded-full shadow-lg bg-white overflow-hidden border-2 border-transparent focus-within:border-blue-300 transition-colors">
+            <div className="grid place-items-center h-full w-12 text-gray-400"><FiSearch size={20} /></div>
+            <input className="peer h-full w-full outline-none text-sm text-gray-700 pr-4 bg-transparent" type="text" placeholder="Ketik produk atau kategori..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+            <button type="submit" className="bg-[#1c54ff] hover:bg-blue-800 text-white h-full px-6 text-sm font-semibold transition-colors">Cari</button>
+          </div>
+        </form>
+        {queryFromUrl ? (
+          <p className="text-blue-100 text-sm md:text-base font-light">Hasil pencarian untuk: <span className="font-bold">"{queryFromUrl}"</span></p>
+        ) : (
+          <p className="text-blue-100 text-sm md:text-base font-light">Menampilkan seluruh katalog produk</p>
+        )}
+        <p className="text-blue-200 text-xs mt-1">{filtered.length} produk ditemukan</p>
       </div>
 
-      {/* KONTEN */}
-      <div className="bg-gray-100 px-6 pt-10 pb-20">
-        <div className="max-w-5xl mx-auto">
-          {/* KATEGORI center */}
-          <div className="flex flex-wrap justify-center gap-3 mb-10">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setSelectedCategory(cat.value)}
-                className={`px-5 py-2 rounded-full border text-sm font-medium transition ${selectedCategory === cat.value ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"}`}
-              >
-                {cat.label}
-              </button>
-            ))}
+      <div className="relative z-10 flex flex-wrap justify-center gap-3 px-6 -mt-6 max-w-4xl mx-auto">
+        {CATEGORIES.map((cat) => (
+          <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-6 py-2.5 rounded-full text-xs md:text-sm font-semibold shadow-md transition-all border ${activeCategory === cat ? "bg-[#1c54ff] text-white border-[#1c54ff]" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}`}>
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div className="max-w-[1300px] mx-auto px-6 mt-16 flex flex-col lg:flex-row gap-10 items-start">
+        <aside className="w-full lg:w-[240px] flex-shrink-0">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+            <h3 className="font-bold text-gray-800 text-sm mb-5 flex items-center gap-2"><FiTag className="text-[#2453d4]" size={16} /> Filter Harga</h3>
+            <div className="space-y-4 text-sm text-gray-600">
+              <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name="price" className="accent-[#1c54ff] w-4 h-4" checked={priceFilter === "all"} onChange={() => setPriceFilter("all")} /> Semua harga</label>
+              <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name="price" className="accent-[#1c54ff] w-4 h-4" checked={priceFilter === "under30"} onChange={() => setPriceFilter("under30")} /> &lt; Rp 30.000</label>
+              <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name="price" className="accent-[#1c54ff] w-4 h-4" checked={priceFilter === "30to80"} onChange={() => setPriceFilter("30to80")} /> Rp 30.000 - Rp 80.000</label>
+              <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name="price" className="accent-[#1c54ff] w-4 h-4" checked={priceFilter === "above80"} onChange={() => setPriceFilter("above80")} /> &gt; Rp 80.000</label>
+            </div>
           </div>
+        </aside>
 
-          <div className="flex gap-6 items-start">
-            {/* FILTER HARGA — selalu tampil */}
-            <div className="w-52 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-              <h3 className="font-semibold text-gray-700 mb-4 text-sm">
-                🏷️ Filter Harga
-              </h3>
-              <div className="space-y-3">
-                {PRICE_RANGES.map((range) => (
-                  <label
-                    key={range.value}
-                    className="flex items-center gap-2 cursor-pointer text-sm text-gray-600 hover:text-blue-600 transition"
-                  >
-                    <input
-                      type="radio"
-                      name="price"
-                      value={range.value}
-                      checked={selectedPrice === range.value}
-                      onChange={() => setSelectedPrice(range.value)}
-                      className="accent-blue-600"
-                    />
-                    {range.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* GRID PRODUK */}
-            <div className="flex-1">
-              {filtered.length === 0 ? (
-                <div className="text-center text-gray-400 py-20">
-                  <p className="text-base font-medium">
-                    Produk tidak ditemukan
-                  </p>
-                  <p className="text-sm mt-1">
-                    Coba ubah filter harga atau kata kunci pencarian
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-16 justify-items-center pt-10">
-                  {filtered.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={handleAddToCart}
-                      navigate={navigate}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+        <div className="flex-1 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-12 gap-x-6">
+            {filtered.map((product) => (
+              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export default Search;
