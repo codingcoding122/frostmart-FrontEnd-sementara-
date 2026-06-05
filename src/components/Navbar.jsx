@@ -20,13 +20,13 @@ function Navbar() {
       <NavLink to="/" className="flex items-center gap-2 shrink-0">
         <img
           src={logo}
-          alt="FrostMart Logo"
+          alt="Logo FrostMart"
           className="w-10 h-10 object-contain"
         />
         <h1 className="text-xl font-bold text-blue-600">FrostMart</h1>
       </NavLink>
 
-      {/* TENGAH */}
+      {/* TENGAH (NAVIGASI) */}
       <div className="flex-1 flex justify-center">
         <ul className="flex gap-10 text-lg font-medium">
           <li>
@@ -38,11 +38,10 @@ function Navbar() {
                   : "text-gray-500 hover:text-blue-600 transition"
               }
             >
-              Home
+              Beranda {/* Diubah dari 'Home' */}
             </NavLink>
           </li>
           
-          {/* DIKEMBALIKAN JADI LINK ROUTER KE HALAMAN MENU */}
           <li>
             <NavLink
               to="/menu"
@@ -56,13 +55,12 @@ function Navbar() {
             </NavLink>
           </li>
 
-          {/* ABOUT TETAP ANCHOR LINK */}
           <li>
             <a
               href="#about"
               className="text-gray-500 hover:text-blue-600 transition"
             >
-              About
+              Tentang Kami {/* Diubah dari 'About' */}
             </a>
           </li>
         </ul>
@@ -104,11 +102,12 @@ function Navbar() {
             <FaUserCircle />
           </button>
         ) : (
+          /* Penyesuaian Tombol Masuk: text-base, rounded-lg, px-6 py-2.5 sesuai standarisasi */
           <button
             onClick={() => navigate("/login")}
-            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-1.5 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-lg text-base font-medium hover:bg-blue-700 transition shadow-sm"
           >
-            Sign in
+            Masuk {/* Diubah dari 'Sign in' */}
           </button>
         )}
       </div>

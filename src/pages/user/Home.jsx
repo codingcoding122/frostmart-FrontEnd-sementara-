@@ -1,64 +1,30 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-import nuggetImage from "../../assets/images/products//chiken nugget fiesta.jpg";
-import karageImage from "../../assets/images/products//karage fiesta.jpg";
-import sosis_sapiImage from "../../assets/images/products//sosis sapi fiesta.jpg";
-import bakso_ikanImage from "../../assets/images/products//bakso ikan shifudo.jpg";
-import otakotak_ikanImage from "../../assets/images/products//otak otak ikan.jpg";
-import sausageImage from "../../assets/images/products//chiken sausage.jpg";
-import chiken_nuggetImage from "../../assets/images/products//nugget kenzler.jpg";
-import siomayImage from "../../assets/images/products//siomay frozen.jpg";
+import axiosInstance from "../../api/axiosInstance";
 
 export default function FrostmartHomePage() {
-  const products = [
-    {
-      name: "Chicken Nugget",
-      brand: "Fiesta",
-      image: nuggetImage,
-    },
-    {
-      name: "Chicken Karage",
-      brand: "Fiesta",
-      image: karageImage,
-    },    
-    {
-      name: "Sosis Sapi",
-      brand: "Fiesta",
-      image: sosis_sapiImage,
-    },
-    {
-      name: "Bakso Ikan",
-      brand: "Shifudo",
-      image: bakso_ikanImage,
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const menuProducts = [
-    {
-      name: "Otak-otak ikan",
-      brand: "Cedea",
-      price: "25.000",
-      image: otakotak_ikanImage
-    },
-    {
-      name: "Chicken Sausage Fiesta",
-      brand: "Fiesta",
-      price: "45.000",
-      image: sausageImage
-     },
-    {
-      name: "Chicken Nugget",
-      brand: " Kanzler",
-      price: "40.000",
-      image:chiken_nuggetImage,
-    },
-    {
-      name: "Siomay Frozen",
-      brand: "First Grade GO",
-      price: "30.000",
-      image:siomayImage
-    },
-  ];
+  // Narik data asli dari Backend pas halaman Home dibuka
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get("/products");
+        const data = response.data.data || response.data || [];
+        setProducts(data);
+      } catch (error) {
+        console.error("Gagal menarik data produk untuk Home:", error);
+      } finally {
+        isLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Potong array buat dipajang: 4 buat Hero, 4 buat Popular Menu
+  const heroProducts = products.slice(0, 4);
+  const menuProducts = products.slice(4, 8);
 
   return (
     <div className="bg-[#f5f5f5] text-gray-800 overflow-hidden">
@@ -66,76 +32,80 @@ export default function FrostmartHomePage() {
       <section className="bg-gradient-to-b from-[#55a8ea] to-[#3a32ff] min-h-[700px] px-10 py-16 flex items-center justify-between">
         <div className="max-w-xl text-white">
           <h1 className="text-7xl font-bold leading-tight mb-8">
-            Be The Fastest In Delivery Your Food
+            Jadi yang Tercepat Dalam Mengantar Makananmu
           </h1>
 
           <p className="text-lg mb-8 text-gray-100">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
-            purus sit amet
+            Pesan frozen food favoritmu sekarang. Pengiriman cepat, aman, dan pastinya halal.
           </p>
 
-          <button className="bg-[#251c7a] px-8 py-4 rounded-full font-semibold">
-            Get Started
+          {/* Penyesuaian Tombol: Padding seragam px-6 py-2.5 & rounded-lg */}
+          <button className="px-6 py-2.5 bg-[#251c7a] hover:bg-opacity-90 text-white font-semibold rounded-lg transition">
+            Mulai Sekarang
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-8">
-          {products.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white w-[260px] rounded-2xl pt-20 pb-8 px-6 relative shadow-xl"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-32 h-32 rounded-full object-cover absolute -top-10 left-1/2 -translate-x-1/2 shadow-lg"
-              />
+          {isLoading ? (
+            <p className="text-white text-xl">Memuat produk...</p>
+          ) : (
+            heroProducts.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white w-[260px] rounded-2xl pt-20 pb-8 px-6 relative shadow-xl"
+              >
+                <img
+                  src={item.image || "https://placehold.co/128x128/e2e8f0/94a3b8?text=Image"}
+                  alt={item.name}
+                  className="w-32 h-32 rounded-full object-cover absolute -top-10 left-1/2 -translate-x-1/2 shadow-lg bg-gray-100"
+                />
 
-              <div className="text-center mt-12">
-                <h2 className="text-2xl font-bold">{item.name}</h2>
-                <p className="text-gray-500 mt-1">By {item.brand}</p>
-                <p className="text-yellow-400 mt-3 text-xl">★★★★★</p>
+                <div className="text-center mt-12">
+                  <h2 className="text-2xl font-bold truncate">{item.name}</h2>
+                  <p className="text-gray-500 mt-1 truncate">Oleh {item.brand}</p>
+                  <p className="text-yellow-400 mt-3 text-xl">★★★★★</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
       {/* WHAT WE SERVE */}
       <section className="py-28 px-10 bg-[#f8f8f8] text-center">
         <p className="text-orange-400 font-semibold text-xl mb-4">
-          How it works
+          Cara Kerja Kami
         </p>
 
-        <h2 className="text-5xl font-bold mb-6">What We Serve</h2>
+        <h2 className="text-5xl font-bold mb-6">Layanan Terbaik Kami</h2>
 
         <p className="text-gray-500 text-xl max-w-3xl mx-auto mb-20">
-          Product Quality Is Our Priority, And Always Guarantees Halal And
-          Safety Until It Is In Your Hands.
+          Kualitas Produk Adalah Prioritas Utama Kami, Dan Selalu Menjamin Kehalalan Serta
+          Keamanan Hingga Sampai Di Tangan Anda.
         </p>
 
         <div className="grid grid-cols-3 gap-10">
           <div className="flex flex-col items-center">
             <div className="text-8xl mb-6">📱</div>
-            <h3 className="text-3xl font-bold mb-4">Easy To Order</h3>
+            <h3 className="text-3xl font-bold mb-4">Mudah Dipesan</h3>
             <p className="text-gray-500 text-xl">
-              You only order through the app
+              Anda hanya perlu memesan langsung lewat aplikasi
             </p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="text-8xl mb-6">🛵</div>
-            <h3 className="text-3xl font-bold mb-4">Fastest Delivery</h3>
+            <h3 className="text-3xl font-bold mb-4">Pengiriman Tercepat</h3>
             <p className="text-gray-500 text-xl">
-              Delivery will be on time
+              Pesanan akan diantar tepat waktu ke lokasi Anda
             </p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="text-8xl mb-6">📦</div>
-            <h3 className="text-3xl font-bold mb-4">Best Quality</h3>
+            <h3 className="text-3xl font-bold mb-4">Kualitas Terbaik</h3>
             <p className="text-gray-500 text-xl">
-              The best quality of food for you
+              Menyediakan kualitas makanan beku terbaik untuk Anda
             </p>
           </div>
         </div>
@@ -153,69 +123,81 @@ export default function FrostmartHomePage() {
 
         <div className="relative text-center text-white">
           <h2 className="text-6xl font-bold mb-10 max-w-4xl leading-tight">
-            Join our member and get discount up to 50%
+            Gabung jadi member kami dan dapatkan diskon hingga 50%
           </h2>
 
-          <Link to="/login">
-           <button
-            className="
-              bg-blue-900
-              hover:bg-blue-700
-              active:scale-95
-              transition-all
-              duration-200
-              text-white
-              px-6
-              py-3
-              rounded-full
-            "
-          >
-            Sign Up
-           </button>
+          <Link to="/register">
+            {/* Penyesuaian Tombol: Padding seragam px-6 py-2.5 & rounded-lg & text-base */}
+            <button
+              className="
+                bg-blue-900
+                hover:bg-blue-700
+                active:scale-95
+                transition-all
+                duration-200
+                text-white
+                px-6
+                py-2.5
+                rounded-lg
+                text-base
+                font-semibold
+              "
+            >
+              Daftar Sekarang
+            </button>
           </Link>
         </div>
       </section>
 
-      {/* POPULAR MENU (ID DITAMBAHKAN DI SINI) */}
+      {/* POPULAR MENU */}
       <section id="menu" className="py-28 px-10 text-center bg-[#f8f8f8]">
-        <p className="text-blue-700 font-semibold text-xl mb-4">Our menu</p>
+        <p className="text-blue-700 font-semibold text-xl mb-4">Menu Kami</p>
 
         <h2 className="text-5xl font-bold mb-6">
-          Our Popular Menu Frozen Food
+          Menu Frozen Food Populer Kami
         </h2>
 
         <p className="text-gray-500 text-xl mb-20">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam
+          Pilihan terbaik dari Frostmart yang paling sering dibeli pelanggan.
         </p>
 
         <div className="grid grid-cols-4 gap-8 mb-14">
-          {menuProducts.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl p-6 shadow-md relative"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-40 h-40 object-cover rounded-full mx-auto mb-6"
-              />
+          {isLoading ? (
+            <p className="col-span-4 text-center text-gray-500">Memuat menu...</p>
+          ) : (
+            menuProducts.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-3xl p-6 shadow-md relative"
+              >
+                <img
+                  src={item.image || "https://placehold.co/160x160/e2e8f0/94a3b8?text=Image"}
+                  alt={item.name}
+                  className="w-40 h-40 object-cover rounded-full mx-auto mb-6 bg-gray-100"
+                />
 
-              <h3 className="text-2xl font-bold">{item.name}</h3>
+                <h3 className="text-2xl font-bold truncate">{item.name}</h3>
 
-              <p className="text-gray-500 mt-2">By {item.brand}</p>
+                <p className="text-gray-500 mt-2 truncate">Oleh {item.brand}</p>
 
-              <p className="font-bold text-xl mt-4">RP: {item.price}</p>
+                <p className="font-bold text-xl mt-4">
+                  Rp {item.price ? item.price.toLocaleString("id-ID") : "0"}
+                </p>
 
-              <span className="absolute bottom-5 right-5 text-yellow-500 text-2xl">
-                ♥
-              </span>
-            </div>
-          ))}
+                <span className="absolute bottom-5 right-5 text-yellow-500 text-2xl">
+                  ♥
+                </span>
+              </div>
+            ))
+          )}
         </div>
 
-        <button className="bg-blue-700 text-white px-10 py-4 rounded-full text-lg font-semibold">
-          More Menu
-        </button>
+        <Link to="/menu">
+          {/* Penyesuaian Tombol: Padding seragam px-6 py-2.5, text-base, rounded-lg */}
+          <button className="bg-blue-700 hover:bg-blue-800 transition-colors text-white px-6 py-2.5 rounded-lg text-base font-semibold">
+            Menu Lainnya
+          </button>
+        </Link>
       </section>
 
       {/* TESTIMONI */}

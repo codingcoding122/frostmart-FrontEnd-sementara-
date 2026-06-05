@@ -1,25 +1,68 @@
-import React from 'react';
-import { FiDownload, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-
-const mockOrders = [
-  { user: 'Budi Santoso', email: 'budi@example.com', id: 'FM-012', product: 'Chicken Wings Premium', date: '12 May 2026', status: 'Selesai' },
-  { user: 'Siti Aminah', email: 'siti@example.com', id: 'FM-011', product: 'Vegetables Nugget', date: '12 May 2026', status: 'Proses' },
-  { user: 'Andi Wijaya', email: 'andi@example.com', id: 'FM-010', product: 'Lumpia Frozen', date: '11 May 2026', status: 'Menunggu' },
-  { user: 'Rina Melati', email: 'rina@example.com', id: 'FM-009', product: 'French Fries', date: '10 May 2026', status: 'Dibatalkan' },
-  { user: 'Joko Anwar', email: 'joko@example.com', id: 'FM-008', product: 'Chicken Sausage', date: '09 May 2026', status: 'Selesai' },
-];
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../api/axiosInstance'; 
+import { FiDownload, FiChevronLeft, FiChevronRight, FiLoader } from 'react-icons/fi';
 
 const getStatusStyle = (status) => {
-  switch(status) {
-    case 'Selesai': return 'bg-green-100 text-green-700 border border-green-200';
-    case 'Menunggu': return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
-    case 'Dibatalkan': return 'bg-red-100 text-red-700 border border-red-200';
-    case 'Proses': return 'bg-white text-gray-700 border border-gray-300 shadow-sm';
+  const s = status?.toLowerCase();
+  switch(s) {
+    case 'completed': return 'bg-green-100 text-green-700 border border-green-200';
+    case 'pending': return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
+    case 'cancelled': return 'bg-red-100 text-red-700 border border-red-200';
+    case 'paid': return 'bg-blue-100 text-blue-700 border border-blue-200'; // Biru untuk status paid
     default: return 'bg-gray-100 text-gray-700';
   }
 };
 
 export default function AdminOrders() {
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axiosInstance.get('/orders');
+      
+      const fetchedData = response.data.map(item => ({
+        id: item.id,
+        orderCode: `FM-${item.id.toString().padStart(3, '0')}`,
+        userId: item.user_id, // Menampilkan User ID asli dari database
+        totalPrice: item.total_price, // Menampilkan total harga asli
+        date: new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+        status: item.status
+      }));
+
+      setOrders(fetchedData);
+    } catch (error) {
+      console.error("❌ Gagal mengambil data pesanan:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    const previousOrders = [...orders];
+
+    const updatedOrders = orders.map(order => 
+      order.id === orderId ? { ...order, status: newStatus } : order
+    );
+    setOrders(updatedOrders);
+
+    try {
+      await axiosInstance.patch(`/orders/${orderId}/status`, {
+        status: newStatus
+      });
+      console.log(`✅ Sukses update order ${orderId} ke database dengan status: ${newStatus}`);
+    } catch (error) {
+      const detailError = error.response?.data?.message || error.message;
+      console.error("❌ Gagal update status ke database:", detailError);
+      setOrders(previousOrders);
+      alert(`Gagal memperbarui status!\nAlasan Backend: ${detailError}`);
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 w-full max-w-7xl mx-auto">
       {/* HEADER SECTION */}
@@ -39,52 +82,57 @@ export default function AdminOrders() {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">User</th>
+                <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">User ID</th>
                 <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">Order ID</th>
-                <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">Product</th>
+                <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">Total Price</th>
                 <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="py-4 px-6 font-semibold text-xs text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {mockOrders.map((order, index) => (
-                <tr key={index} className="hover:bg-blue-50/30 transition-colors">
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <img 
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(order.user)}&background=random`} 
-                        alt={order.user} 
-                        className="w-10 h-10 rounded-full object-cover shadow-sm"
-                      />
-                      <div>
-                        <p className="font-semibold text-gray-900 text-sm">{order.user}</p>
-                        <p className="text-xs text-gray-500">{order.email}</p>
-                      </div>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="5" className="py-10 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500">
+                      <FiLoader className="animate-spin mb-2" size={24} />
+                      <span className="text-sm font-medium">Memuat pesanan masuk...</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 font-medium text-gray-900 text-sm">{order.id}</td>
-                  <td className="py-4 px-6 text-gray-700 text-sm">{order.product}</td>
-                  <td className="py-4 px-6 text-gray-500 text-sm">{order.date}</td>
-                  <td className="py-4 px-6">
-                    <span className={`px-3 py-1.5 rounded-lg text-xs font-bold ${getStatusStyle(order.status)}`}>
-                      {order.status}
-                    </span>
+                </tr>
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="py-10 text-center text-gray-500 text-sm font-medium">
+                    Belum ada pesanan yang masuk.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                orders.map((order, index) => (
+                  <tr key={index} className="hover:bg-blue-50/30 transition-colors">
+                    <td className="py-4 px-6 font-semibold text-gray-900 text-sm">
+                      Customer #{order.userId}
+                    </td>
+                    <td className="py-4 px-6 font-medium text-gray-900 text-sm">{order.orderCode}</td>
+                    <td className="py-4 px-6 text-gray-700 text-sm font-medium">
+                      Rp {Number(order.totalPrice).toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-4 px-6 text-gray-500 text-sm">{order.date}</td>
+                    <td className="py-4 px-6">
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer outline-none transition-colors ${getStatusStyle(order.status)}`}
+                      >
+                        <option value="pending">Menunggu</option>
+                        <option value="paid">Paid (Dibayar)</option>
+                        <option value="completed">Selesai</option>
+                        <option value="cancelled">Dibatalkan</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
-        </div>
-
-        {/* PAGINATION FOOTER */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-white">
-          <button className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors px-3 py-1.5 border border-transparent hover:border-gray-200 rounded-lg">
-            <FiChevronLeft size={16} /> Previous
-          </button>
-          <span className="text-sm text-gray-500 font-medium">Page 1 of 10</span>
-          <button className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors px-3 py-1.5 border border-transparent hover:border-gray-200 rounded-lg">
-            Next <FiChevronRight size={16} />
-          </button>
         </div>
       </div>
     </div>

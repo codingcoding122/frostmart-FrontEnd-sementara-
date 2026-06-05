@@ -5,6 +5,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 // =========================
 import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
+import ProfileLayout from "../layouts/ProfileLayout"; 
 
 // =========================
 // USER PAGES (Customer)
@@ -18,7 +19,8 @@ import Checkout from "../pages/user/Checkout";
 import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 import Profile from "../pages/user/Profile";
-import UserOrders from "../pages/user/Orders"; // Menggunakan UserOrders untuk membedakan dengan Admin
+import UserOrders from "../pages/user/Orders"; 
+import OrderDetail from "../pages/user/OrderDetail"; // <--- TAMBAHAN: Import OrderDetail
 import Settings from "../pages/user/Settings";
 import Address from "../pages/user/Address";
 
@@ -27,7 +29,7 @@ import Address from "../pages/user/Address";
 // =========================
 import Dashboard from "../pages/admin/Dashboard";
 import Analytics from "../pages/admin/Analytics";
-import AdminOrders from "../pages/admin/Orders"; // Alias untuk mencegah bentrok nama
+import AdminOrders from "../pages/admin/Orders"; 
 import Products from "../pages/admin/Products";
 import Customers from "../pages/admin/Customers";
 import Invoice from "../pages/admin/Invoice";
@@ -46,7 +48,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/menu",
-        element: <Menu />, // Rute Menu yang sempat hilang sudah ditambahkan
+        element: <Menu />, 
       },
       {
         path: "/search",
@@ -72,22 +74,34 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
       },
-      // PROFILE REDIRECT & PAGES
+      // =======================================
+      // PROFILE PAGES (Memakai ProfileLayout)
+      // =======================================
       {
         path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/profile/orders",
-        element: <UserOrders />, // Menggunakan komponen khusus User
-      },
-      {
-        path: "/profile/settings",
-        element: <Settings />,
-      },
-      {
-        path: "/profile/address",
-        element: <Address />,
+        element: <ProfileLayout />, 
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/profile/orders" replace /> 
+          },
+          {
+            path: "orders",
+            element: <UserOrders />,
+          },
+          {
+            path: "orders/:id", // <--- TAMBAHAN: Rute untuk Detail Pesanan
+            element: <OrderDetail />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "address",
+            element: <Address />,
+          },
+        ],
       },
     ],
   },
@@ -100,16 +114,16 @@ const router = createBrowserRouter([
     element: <AdminLayout />,
     children: [
       {
-        index: true, // Menandakan ini adalah halaman default saat mengakses /admin
+        index: true, 
         element: <Dashboard />,
       },
       {
-        path: "customers", // <--- INI SUDAH DIPERBARUI DARI "users" MENJADI "customers"
-        element: <Customers />, // Menyesuaikan dengan nama import dari Zahra
+        path: "customers", 
+        element: <Customers />, 
       },
       {
-        path: "orders", // <--- INI SUDAH DIPERBARUI DARI "transactions" MENJADI "orders"
-        element: <AdminOrders />, // Menggunakan komponen khusus Admin
+        path: "orders", 
+        element: <AdminOrders />, 
       },
       {
         path: "products",

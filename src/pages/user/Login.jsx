@@ -1,23 +1,48 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../store/slices/authSlice";
+import axiosInstance from "../../api/axiosInstance";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogin = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    setIsLoading(true);
 
-    // DUMMY LOGIN — nanti ganti dengan axios ke API backend
-    dispatch(
-      loginSuccess({
-        name: "User Frostmart",
-        email: "user@frostmart.com",
-      }),
-    );
+    try {
+      const response = await axiosInstance.post("/auth/local/signin", {
+        email,
+        password,
+      });
 
-    navigate("/");
+      // Backend cuma ngirim user, jadi kita tangkap user-nya aja
+      const validUser = response.data.user;
+
+      // Nggak perlu nyimpen Token di localStorage karena udah otomatis masuk ke Cookie!
+      localStorage.setItem("user", JSON.stringify(validUser));
+      dispatch(loginSuccess(validUser));
+
+      if (validUser.role && validUser.role.toLowerCase() === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+      
+    } catch (error) {
+      const detailError = error.response?.data?.message || error.message;
+      setErrorMsg(detailError || "Koneksi ke backend gagal.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -26,15 +51,24 @@ function Login() {
         <h1 className="text-4xl font-bold mb-3 text-gray-700">
           Login to your Account
         </h1>
-        <p className="text-gray-500 mb-8">Welcome back to FrostMart</p>
+        <p className="text-gray-500 mb-6">Welcome back to FrostMart</p>
+
+        {errorMsg && (
+          <div className="bg-red-100 text-red-600 p-3 rounded-xl mb-4 text-sm font-medium text-center border border-red-200">
+            {errorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block mb-2 font-medium">Email</label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="mail@example.com"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#1c54ff] transition-all"
             />
           </div>
 
@@ -42,8 +76,11 @@ function Login() {
             <label className="block mb-2 font-medium">Password</label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-blue-500"
+              required
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#1c54ff] transition-all"
             />
           </div>
 
@@ -53,7 +90,7 @@ function Login() {
             </label>
             <button
               type="button"
-              className="text-blue-700 hover:text-blue-900 transition"
+              className="text-[#1c54ff] hover:text-blue-800 transition"
             >
               Forgot Password?
             </button>
@@ -61,21 +98,14 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-blue-900 hover:bg-blue-950 transition text-white py-4 rounded-xl text-lg font-semibold"
+            disabled={isLoading}
+            className={`w-full transition text-white py-4 rounded-xl text-lg font-semibold shadow-md ${
+              isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-[#1c54ff] hover:bg-blue-700"
+            }`}
           >
-            Login
+            {isLoading ? "Loading..." : "Login"}
           </button>
         </form>
-
-        <p className="text-center mt-8">
-          Not registered yet?{" "}
-          <Link
-            to="/register"
-            className="font-semibold text-blue-800 hover:text-blue-950 transition"
-          >
-            Create an account
-          </Link>
-        </p>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export default function Cart() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
 
-  const isEmpty = cartItems.length === 0;
+  const isEmpty = cartItems.length === 0; 
 
   const subtotal = cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
   const totalItem = cartItems.reduce((sum, i) => sum + i.qty, 0);

@@ -1,32 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../store/slices/cartSlice";
 import { FiStar, FiShoppingCart, FiTag } from "react-icons/fi";
-
-// =====================
-// DATA DUMMY PRODUK
-// =====================
-const dummyProducts = [
-  { id: 1, name: "Chicken Wings", brand: "So Good", category: "Frozen Chicken", price: 45000, rating: 5, image: "/src/assets/images/products/chiken nugget fiesta.jpg" },
-  { id: 2, name: "Vegetables Nugget", brand: "Fiesta", category: "Frozen Chicken", price: 65000, rating: 5, image: "/src/assets/images/products/chiken nugget fiesta.jpg" },
-  { id: 3, name: "Lumpia Frozen", brand: "Samijaya Jogja", category: "Frozen Chicken", price: 85000, rating: 4, image: "/src/assets/images/products/karage fiesta.jpg" },
-  { id: 4, name: "French Fries", brand: "Belfoods", category: "Frozen Vegetables", price: 25000, rating: 4, image: "/src/assets/images/products/siomay frozen.jpg" },
-  { id: 5, name: "Mixed Vegetables", brand: "Golden Farm", category: "Frozen Vegetables", price: 41000, rating: 4, image: "/src/assets/images/products/otak otak ikan.jpg" },
-  { id: 6, name: "Beef Patties", brand: "Yona", category: "Frozen Beef", price: 45000, rating: 5, image: "/src/assets/images/products/sosis sapi fiesta.jpg" },
-  { id: 7, name: "Dimsum Frozen", brand: "Damory", category: "Frozen Seafood", price: 28000, rating: 4, image: "/src/assets/images/products/otak otak ikan.jpg" },
-  { id: 8, name: "Seafood Ebi Fry Tempura", brand: "Fiesta", category: "Frozen Seafood", price: 36000, rating: 4, image: "/src/assets/images/products/bakso ikan shifudo.jpg" },
-  { id: 9, name: "Fillet Ikan Patin", brand: "Frozen Pangasius", category: "Frozen Seafood", price: 53000, rating: 4, image: "/src/assets/images/products/bakso ikan shifudo.jpg" },
-  { id: 10, name: "Ayam Potong 1/2 Ekor", brand: "Frozen", category: "Frozen Chicken", price: 28000, rating: 4, image: "/src/assets/images/products/chiken sausage.jpg" },
-  { id: 11, name: "Frozen Mix Vegetable", brand: "Golden Farm", category: "Frozen Vegetables", price: 32000, rating: 4, image: "/src/assets/images/products/siomay frozen.jpg" },
-  { id: 12, name: "Risol Mayo", brand: "Nisofood", category: "Frozen Chicken", price: 20000, rating: 4, image: "/src/assets/images/products/karage fiesta.jpg" },
-  { id: 13, name: "Minipou Isi Coklat", brand: "Chik Yen", category: "Frozen Chicken", price: 35000, rating: 4, image: "/src/assets/images/products/nugget kenzler.jpg" },
-  { id: 14, name: "Baso Ayam Mini", brand: "Fiesta", category: "Frozen Chicken", price: 15000, rating: 5, image: "/src/assets/images/products/nugget kenzler.jpg" },
-  { id: 15, name: "Chicken Sausage", brand: "SoGood", category: "Frozen Chicken", price: 48000, rating: 5, image: "/src/assets/images/products/chiken sausage.jpg" },
-  { id: 16, name: "Nugget Kenzler", brand: "Kenzler", category: "Frozen Chicken", price: 47000, rating: 5, image: "/src/assets/images/products/nugget kenzler.jpg" },
-  { id: 17, name: "Bakso Ikan Shifudo", brand: "Shifudo", category: "Frozen Seafood", price: 32000, rating: 5, image: "/src/assets/images/products/bakso ikan shifudo.jpg" },
-  { id: 18, name: "Siomay Frozen", brand: "Belfoods", category: "Frozen Seafood", price: 35000, rating: 5, image: "/src/assets/images/products/siomay frozen.jpg" },
-];
+import axiosInstance from "../../api/axiosInstance";
 
 const CATEGORIES = [
   "All Products",
@@ -36,7 +13,7 @@ const CATEGORIES = [
   "Frozen Vegetables",
 ];
 
-function Stars({ rating }) {
+function Stars({ rating = 5 }) {
   return (
     <div className="flex gap-0.5 justify-center mt-2 mb-1">
       {[1, 2, 3, 4, 5].map((s) => (
@@ -52,15 +29,22 @@ function ProductCard({ product, onAddToCart }) {
       <div className="relative bg-white rounded-[2rem] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.08)] hover:shadow-xl transition-shadow pt-14 pb-4 px-4 flex flex-col h-full border border-gray-50 items-center text-center">
         <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-white rounded-full p-1 shadow-sm">
           <Link to={`/product/${product.id}`} className="block w-full h-full rounded-full overflow-hidden bg-gray-100">
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/120x120/e2e8f0/94a3b8?text=Img"; }} />
+            <img 
+              src={product.image || "https://placehold.co/120x120/e2e8f0/94a3b8?text=Image"} 
+              alt={product.name} 
+              className="w-full h-full object-cover" 
+              onError={(e) => { e.target.src = "https://placehold.co/120x120/e2e8f0/94a3b8?text=Img"; }} 
+            />
           </Link>
         </div>
         <div className="flex-1 flex flex-col w-full">
-          <Stars rating={product.rating} />
+          <Stars rating={product.rating || 5} />
           <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-1 mt-1">{product.name}</h3>
-          <p className="text-[11px] text-gray-500 mt-1 mb-3">{product.brand} - {product.category}</p>
+          <p className="text-[11px] text-gray-500 mt-1 mb-3">{product.brand} - {product.category || 'Lainnya'}</p>
           <div className="mt-auto w-full">
-            <p className="text-blue-700 font-bold text-[15px] mb-3">RP: {product.price.toLocaleString("id-ID")}</p>
+            <p className="text-blue-700 font-bold text-[15px] mb-3">
+              RP: {product.price ? product.price.toLocaleString("id-ID") : "0"}
+            </p>
             <button onClick={() => onAddToCart(product)} className="w-full bg-[#1c54ff] hover:bg-blue-800 text-white rounded-lg py-2.5 flex items-center justify-center gap-2 text-sm font-semibold shadow-md transition-transform hover:scale-105 active:scale-95">
               <FiShoppingCart size={16} /> Add to Cart
             </button>
@@ -75,19 +59,44 @@ function Menu() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.auth.isLogin);
+  
+  // State Dinamis
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [priceFilter, setPriceFilter] = useState("all");
 
+  // Fetch dari API Backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get("/products");
+        const data = response.data.data || response.data || [];
+        setProducts(data);
+      } catch (error) {
+        console.error("Gagal menarik data menu:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const filtered = useMemo(() => {
-    return dummyProducts.filter((p) => {
-      const matchCat = activeCategory === "All Products" || p.category === activeCategory;
+    return products.filter((p) => {
+      // Pastikan category ada supaya filter jalan (pakai fallback buat data kotor)
+      const cat = p.category || "Lainnya";
+      const matchCat = activeCategory === "All Products" || cat === activeCategory;
+      
       let matchPrice = true;
-      if (priceFilter === "under30") matchPrice = p.price < 30000;
-      if (priceFilter === "30to80") matchPrice = p.price >= 30000 && p.price <= 80000;
-      if (priceFilter === "above80") matchPrice = p.price > 80000;
+      const price = p.price || 0;
+      if (priceFilter === "under30") matchPrice = price < 30000;
+      if (priceFilter === "30to80") matchPrice = price >= 30000 && price <= 80000;
+      if (priceFilter === "above80") matchPrice = price > 80000;
+      
       return matchCat && matchPrice;
     });
-  }, [activeCategory, priceFilter]);
+  }, [activeCategory, priceFilter, products]);
 
   const handleAddToCart = (product) => {
     if (!isLogin) {
@@ -101,12 +110,12 @@ function Menu() {
   return (
     <div className="min-h-screen bg-[#f5f5f5] pb-24">
       
-      {/* Hero Section - Sesuai Figma (Biru bersih, bawah melengkung, TANPA search bar) */}
+      {/* Hero Section */}
       <div className="bg-[#2453d4] pt-20 pb-28 px-6 text-center text-white rounded-b-[3rem] shadow-sm relative">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-widest uppercase">ALWAYS FROZEN</h1>
       </div>
 
-      {/* Tombol Kategori - Sesuai Figma (Melayang menumpuk di atas header biru) */}
+      {/* Tombol Kategori */}
       <div className="relative z-10 flex flex-wrap justify-center gap-3 px-6 -mt-6 max-w-4xl mx-auto">
         {CATEGORIES.map((cat) => (
           <button 
@@ -122,7 +131,7 @@ function Menu() {
         ))}
       </div>
 
-      {/* Main Layout: Kiri Sidebar, Kanan Produk */}
+      {/* Main Layout */}
       <div className="max-w-[1300px] mx-auto px-6 mt-16 flex flex-col lg:flex-row gap-10 items-start">
         
         {/* Kolom KIRI: Filter Harga */}
@@ -142,11 +151,17 @@ function Menu() {
 
         {/* Kolom KANAN: Grid 4 Kolom Produk */}
         <div className="flex-1 w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-12 gap-x-6">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center text-gray-500 py-10 font-semibold">Mengambil menu terbaru dari server...</div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center text-gray-500 py-10 font-semibold">Tidak ada produk di kategori ini.</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-12 gap-x-6">
+              {filtered.map((product) => (
+                <ProductCard key={product.id || product._id} product={product} onAddToCart={handleAddToCart} />
+              ))}
+            </div>
+          )}
         </div>
 
       </div>
